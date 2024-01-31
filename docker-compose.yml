@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  # Server service
+  server:
+    build:
+      context: ./herepark-backend
+      dockerfile: Dockerfile
+    container_name: hp-backend
+
+    ports:
+      - 5000:5000
+    env_file: ./herepark-backend/.env
+    depends_on:
+      - mongodb
+
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "5000"]
+
+  # Client service
+  client:
+    build:
+      context: ./herepark-frontend
+      dockerfile: Dockerfile
+    container_name: hp-frontend
+
+    ports:
+      - 8000:8000
+    depends_on:
+      - server
+
+    command: ["npm", "run", "dev"]
+
+  # Database service
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb_server
+
+    ports:
+      - 27017:27017
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=hpmongo
+      - MONGO_INITDB_ROOT_PASSWORD=hpmongo
+
+    volumes:
+      - ./hereparkdata:/data/db
+
+# Volumes define
+volumes:
+  hereparkdata:
