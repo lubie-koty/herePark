@@ -10,6 +10,10 @@ class Settings(BaseSettings):
         'postgresql+asyncpg://user:pass@hostname:5432/db'
     )
 
+    SECRET_KEY: str = 'secret'
+    JWT_ALGORITHM: str = 'HS256'
+    TOKEN_EXPIRE_MINUTES: int = 30
+
     model_config = SettingsConfigDict(env_prefix='HP_', env_file='.env')
 
 

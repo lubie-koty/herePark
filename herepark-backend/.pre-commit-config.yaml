@@ -11,6 +11,8 @@ repos:
     rev: 7ef0350
     hooks:
     -   id: flake8
+        args: [--max-line-length=120]
+        exclude: alembic/
         types: [python]
 
 -   repo: https://github.com/pycqa/isort
