@@ -33,7 +33,7 @@ async def login(
 
 @security_router.post('/register')
 async def register(
-    form_data: Annotated[UserRegistrationData, Depends()],
+    form_data: UserRegistrationData,
     user_service: Annotated[IUserService, Depends(get_user_service)]
 ) -> Token:
     new_user = await user_service.add_user(form_data)
