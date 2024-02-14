@@ -14,7 +14,7 @@ class IParkingService(ABC):
         ...
 
     @abstractmethod
-    async def add_reservation(self, form_data: ReservationForm) -> None:
+    async def add_reservation(self, form_data: ReservationForm, user_id: int) -> None:
         ...
 
     @abstractmethod

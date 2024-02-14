@@ -12,7 +12,7 @@ function authorizeUser() {
 
 onErrorCaptured((e: Error) => {
   errorMessage.value.showErrorMessage(e.message)
-  return false
+  // return false
 })
 </script>
 

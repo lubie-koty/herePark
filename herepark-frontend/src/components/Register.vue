@@ -36,7 +36,7 @@ async function register() {
 <template>
 <div class="card mx-auto w-50">
   <div class="card-body">
-    <form>
+    <form @submit.prevent="register">
         <div class="mb-3">
             <label for="inputUsername" class="form-label">Username</label>
             <input type="text" class="form-control" id="inputUsername" v-model="username" required>
@@ -65,7 +65,7 @@ async function register() {
                 </div>
             </div>
         </div>
-        <button type="submit" class="btn btn-secondary" @click="register">Register</button>
+        <button type="submit" class="btn btn-secondary">Register</button>
     </form>
   </div>
 </div>

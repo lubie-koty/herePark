@@ -41,7 +41,6 @@ def decode_access_token(token: str) -> dict | None:
         decoded_jwt = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
     except Exception:
         decoded_jwt = {}
-    print(decoded_jwt['exp'])
     if decoded_jwt.get('exp') and \
        decoded_jwt.get('exp') >= datetime.now(timezone.utc).timestamp() and \
        decoded_jwt.get('sub'):
@@ -53,13 +52,13 @@ class JWTBearer(HTTPBearer):
     def __init__(self, auto_error: bool = True):
         super().__init__(auto_error=auto_error)
 
-    async def __call__(self, request: Request):
+    async def __call__(self, request: Request) -> dict:
         credentials: HTTPAuthorizationCredentials = await super().__call__(request)
         if credentials:
             if credentials.scheme != 'Bearer':
                 raise credentials_exception
-            if not decode_access_token(credentials.credentials):
+            if not (decoded_token := decode_access_token(credentials.credentials)):
                 raise credentials_exception
-            return credentials.credentials
+            return decoded_token
         else:
             raise credentials_exception

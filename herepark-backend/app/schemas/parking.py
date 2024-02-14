@@ -3,6 +3,11 @@ from datetime import datetime
 from pydantic import BaseModel
 
 
+class Position(BaseModel):
+    lat: float
+    lng: float
+
+
 class ReservationInformation(BaseModel):
     reservation_id: int
     reservation_datetime: datetime
@@ -10,9 +15,8 @@ class ReservationInformation(BaseModel):
 
 class ParkingSpaceInformation(BaseModel):
     space_id: int
-    latitude: float
-    longitude: float
-    average_rating: float
+    position: Position
+    average_rating: str
     reservations: list[ReservationInformation]
 
 
@@ -24,7 +28,6 @@ class ParkingSpaceForm(BaseModel):
 
 class ReservationForm(BaseModel):
     space_id: int
-    user_id: int
     reservation_datetime: datetime
 
 

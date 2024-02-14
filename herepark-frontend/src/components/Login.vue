@@ -27,16 +27,16 @@ async function login() {
 <template>
 <div class="card mx-auto w-25">
   <div class="card-body">
-    <form>
+    <form @submit.prevent="login">
         <div class="mb-3">
-            <label for="exampleInputUsername" class="form-label">Username</label>
-            <input type="text" class="form-control" id="exampleInputUsername" aria-describedby="usernameHelp" v-model="username" required>
+            <label for="inputUsername" class="form-label">Username</label>
+            <input type="text" class="form-control" id="inputUsername" aria-describedby="usernameHelp" v-model="username" required>
         </div>
         <div class="mb-3">
-            <label for="exampleInputPassword" class="form-label">Password</label>
-            <input type="password" class="form-control" id="exampleInputPassword" v-model="password" required>
+            <label for="inputPassword" class="form-label">Password</label>
+            <input type="password" class="form-control" id="inputPassword" v-model="password" required>
         </div>
-        <button type="submit" class="btn btn-secondary" @click="login">Login</button>
+        <button type="submit" class="btn btn-secondary">Login</button>
     </form>
   </div>
 </div>

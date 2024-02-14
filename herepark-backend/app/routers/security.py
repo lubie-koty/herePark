@@ -4,7 +4,7 @@ from app.core.config import settings
 from app.dependencies import get_user_service
 from app.interfaces.users import IUserService
 from app.schemas.users import Token, UserRegistrationData
-from app.utils.security import JWTBearer, create_access_token
+from app.utils.security import create_access_token
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from typing_extensions import Annotated
@@ -42,8 +42,3 @@ async def register(
         data={'sub': new_user.username}, expires_delta=access_token_expires
     )
     return Token(access_token=access_token, token_type='bearer')
-
-
-@security_router.post('/test', dependencies=[Depends(JWTBearer())])
-async def test():
-    return {'siema': 1}

@@ -16,19 +16,21 @@ class UserService(IUserService):
         self.db_session = db_session
 
     async def get_user(self, username: str) -> User | None:
-        q = select(User).where(User.username == username)
-        return await self.db_session.scalar(q)
+        async with self.db_session.begin():
+            q = select(User).where(User.username == username)
+            result = await self.db_session.scalar(q)
+        return result
 
     async def add_user(self, register_data: UserRegistrationData) -> None:
         try:
+            existing_user = await self.get_user(register_data.username)
+            if existing_user:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail='User already exists',
+                    headers={'WWW-Authenticate': 'Bearer'}
+                )
             async with self.db_session.begin():
-                existing_user = await self.get_user(register_data.username)
-                if existing_user:
-                    raise HTTPException(
-                        status_code=status.HTTP_400_BAD_REQUEST,
-                        detail='User already exists',
-                        headers={'WWW-Authenticate': 'Bearer'}
-                    )
                 new_user = User(
                     username=register_data.username,
                     password_hash=get_password_hash(register_data.password),

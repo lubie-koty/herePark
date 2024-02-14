@@ -1,20 +1,39 @@
 version: '3.8'
 
 services:
+  # Database service
+  postgresdb:
+    container_name: herepark-db
+    image: postgres:16-alpine
+    volumes:
+      - hereparkdata:/data/db
+    environment:
+      - PGUSER=${APP_DB_USER}
+      - POSTGRES_PASSWORD=${APP_DB_PASSWORD}
+      - POSTGRES_USER=${APP_DB_USER}
+      - POSTGRES_DB=${APP_DB_NAME}
+    healthcheck:
+      test: "pg_isready -h postgresdb"
+      interval: 3s
+      timeout: 5s
+      retries: 5
+
   # Server service
   server:
     build:
       context: ./herepark-backend
       dockerfile: Dockerfile
     container_name: hp-backend
-
+    env_file: ./herepark-backend/.env
     ports:
       - 5000:5000
-    env_file: ./herepark-backend/.env
     depends_on:
-      - mongodb
-
-    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "5000"]
+      postgresdb:
+        condition: service_healthy
+    command: >
+      sh -c "poetry run alembic upgrade head &&
+      poetry run python scripts/init_spaces.py &&
+      poetry run uvicorn app.main:app --host 0.0.0.0 --port 5000"
 
   # Client service
   client:
@@ -28,21 +47,7 @@ services:
     depends_on:
       - server
 
-    command: ["npm", "run", "dev"]
-
-  # Database service
-  mongodb:
-    image: mongo:latest
-    container_name: mongodb_server
-
-    ports:
-      - 27017:27017
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=hpmongo
-      - MONGO_INITDB_ROOT_PASSWORD=hpmongo
-
-    volumes:
-      - ./hereparkdata:/data/db
+    command: npm run dev
 
 # Volumes define
 volumes:
